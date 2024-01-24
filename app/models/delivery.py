@@ -4,8 +4,7 @@ import enum
 from uuid import UUID
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict
-
-from .deliveryman import Deliveryman 
+from app.models.deliveryman import Deliveryman 
 
 
 class DeliveryStatuses(enum.Enum):
