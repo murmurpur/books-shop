@@ -5,10 +5,10 @@ from fastapi import FastAPI
 
 from app import rabbitmq
 from app.settings import settings
-from app.endpoints.delivery_router import delivery_router
+from app.endpoints.order_router import order_router
 
 
-app = FastAPI(title='Delivery Service')
+app = FastAPI(title='Order Service')
 
 
 @app.on_event('startup')
@@ -17,4 +17,4 @@ def startup():
     asyncio.ensure_future(rabbitmq.consume(loop))
 
 
-app.include_router(delivery_router, prefix='/api')
+app.include_router(order_router, prefix='/api')

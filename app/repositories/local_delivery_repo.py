@@ -1,47 +1,47 @@
-# /app/repositories/local_delivery_repo.py
+# /app/repositories/local_order_repo.py
 
 from uuid import UUID
 
-from app.models.delivery import Delivery
+from app.models.order import Order
 
 
-deliveries: list[Delivery] = []
+orders: list[Order] = []
 
 
-class DeliveryRepo():
+class OrderRepo():
     def __init__(self, clear: bool = False) -> None:
         if clear:
-            deliveries.clear()
+            orders.clear()
 
-    def get_deliveries(self) -> list[Delivery]:
-        return deliveries
+    def get_orders(self) -> list[Order]:
+        return orders
 
-    def get_delivery_by_id(self, id: UUID) -> Delivery:
-        for d in deliveries:
+    def get_order_by_id(self, id: UUID) -> Order:
+        for d in orders:
             if d.id == id:
                 return d
 
         raise KeyError
 
-    def create_delivery(self, delivery: Delivery) -> Delivery:
-        if len([d for d in deliveries if d.id == delivery.id]) > 0:
+    def create_order(self, order: Order) -> Order:
+        if len([d for d in orders if d.id == order.id]) > 0:
             raise KeyError
 
-        deliveries.append(delivery)
-        return delivery
+        orders.append(order)
+        return order
 
-    def set_status(self, delivery: Delivery) -> Delivery:
-        for d in deliveries:
-            if d.id == delivery.id:
-                d.status = delivery.status
+    def set_status(self, order: Order) -> Order:
+        for d in orders:
+            if d.id == order.id:
+                d.status = order.status
                 break
 
-        return delivery
+        return order
 
-    def set_deliveryman(self, delivery: Delivery) -> Delivery:
-        for d in deliveries:
-            if d.id == delivery.id:
-                d.deliveryman = delivery.deliveryman
+    def set_storekeeper(self, order: Order) -> Order:
+        for d in orders:
+            if d.id == order.id:
+                d.storekeeper = order.storekeeper
                 break
 
-        return delivery
+        return order

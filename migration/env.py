@@ -17,7 +17,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from app.schemas.delivery import Delivery
+from app.schemas.order import Order
 from app.schemas.base_schema import Base
 
 target_metadata = Base.metadata

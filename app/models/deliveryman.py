@@ -1,10 +1,10 @@
-# /app/models/deliveryman.py
+# /app/models/storekeeper.py
 
 from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
 
-class Deliveryman(BaseModel):
+class Storekeeper(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID

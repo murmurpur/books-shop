@@ -7,14 +7,14 @@ from aio_pika.abc import AbstractRobustConnection
 from aio_pika import connect_robust, IncomingMessage
 
 from app.settings import settings
-from app.services.delivery_service import DeliveryService
-from app.repositories.db_delivery_repo import DeliveryRepo
+from app.services.order_service import OrderService
+from app.repositories.db_order_repo import OrderRepo
 
 
 async def process_created_order(msg: IncomingMessage):
     try:
         data = json.loads(msg.body.decode())
-        DeliveryService(DeliveryRepo()).create_delivery(
+        OrderService(OrderRepo()).create_order(
             data['order_id'], data['date'], data['address'])
     except:
         traceback.print_exc()
@@ -24,7 +24,7 @@ async def process_created_order(msg: IncomingMessage):
 async def process_paid_order(msg: IncomingMessage):
     try:
         data = json.loads(msg.body.decode())
-        DeliveryService(DeliveryRepo()).activate_delivery(data['id'])
+        OrderService(OrderRepo()).activate_order(data['id'])
     except:
         await msg.ack()
     pass

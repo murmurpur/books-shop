@@ -1,44 +1,44 @@
-# /tests/unit/test_delivery_model.py
+# /tests/unit/test_order_model.py
 
 import pytest
 from uuid import uuid4
 from datetime import datetime
 from pydantic import ValidationError
 
-from app.models.deliveryman import Deliveryman
-from app.models.delivery import Delivery, DeliveryStatuses
+from app.models.storekeeper import Storekeeper
+from app.models.order import Order, OrderStatuses
 
 
 @pytest.fixture()
-def any_deliveryman() -> Deliveryman:
-    return Deliveryman(id=uuid4(), name='delliveryman')
+def any_storekeeper() -> Storekeeper:
+    return Storekeeper(id=uuid4(), name='delliveryman')
 
 
-def test_delivery_creation(any_deliveryman: Deliveryman):
+def test_order_creation(any_storekeeper: Storekeeper):
     id = uuid4()
     address = 'address'
     date = datetime.now()
-    status = DeliveryStatuses.DONE
-    delivery = Delivery(id=id, address=address, date=date,
-                        status=status, deliveryman=any_deliveryman)
+    status = OrderStatuses.DONE
+    order = Order(id=id, address=address, date=date,
+                        status=status, storekeeper=any_storekeeper)
 
-    assert dict(delivery) == {'id': id, 'address': address, 'status': status,
-                              'deliveryman': any_deliveryman, 'date': date}
+    assert dict(order) == {'id': id, 'address': address, 'status': status,
+                              'storekeeper': any_storekeeper, 'date': date}
 
 
-def test_delivery_address_required(any_deliveryman: Deliveryman):
+def test_order_address_required(any_storekeeper: Storekeeper):
     with pytest.raises(ValidationError):
-        Delivery(id=uuid4(), date=datetime.now(),
-                 status=DeliveryStatuses.ACTIVATED, deliveryman=any_deliveryman)
+        Order(id=uuid4(), date=datetime.now(),
+                 status=OrderStatuses.ACTIVATED, storekeeper=any_storekeeper)
 
 
-def test_delivery_date_required(any_deliveryman: Deliveryman):
+def test_order_date_required(any_storekeeper: Storekeeper):
     with pytest.raises(ValidationError):
-        Delivery(id=uuid4(), address='str',
-                 status=DeliveryStatuses.ACTIVATED, deliveryman=any_deliveryman)
+        Order(id=uuid4(), address='str',
+                 status=OrderStatuses.ACTIVATED, storekeeper=any_storekeeper)
 
 
-def test_delivery_status_required(any_deliveryman: Deliveryman):
+def test_order_status_required(any_storekeeper: Storekeeper):
     with pytest.raises(ValidationError):
-        Delivery(id=uuid4(), date=datetime.now(),
-                 address='str', deliveryman=any_deliveryman)
+        Order(id=uuid4(), date=datetime.now(),
+                 address='str', storekeeper=any_storekeeper)

@@ -2,17 +2,17 @@ import pytest
 from uuid import uuid4
 from pydantic import ValidationError
 
-from app.models.deliveryman import Deliveryman
+from app.models.storekeeper import Storekeeper
 
 
-def test_deliveryman_creation():
+def test_storekeeper_creation():
     id = uuid4()
     name = 'name'
-    deliveryman = Deliveryman(id=id, name=name)
+    storekeeper = Storekeeper(id=id, name=name)
 
-    assert dict(deliveryman) == {'id': id, 'name': name}
+    assert dict(storekeeper) == {'id': id, 'name': name}
 
 
-def test_deliveryman_name_required():
+def test_storekeeper_name_required():
     with pytest.raises(ValidationError):
-        Deliveryman(id=id)
+        Storekeeper(id=id)

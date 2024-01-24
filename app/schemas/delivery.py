@@ -1,17 +1,17 @@
-# /app/schemas/delivery.py
+# /app/schemas/order.py
 
 from sqlalchemy import Column, String, DateTime, Enum
 from sqlalchemy.dialects.postgresql import UUID
 
 from app.schemas.base_schema import Base
-from app.models.delivery import DeliveryStatuses
+from app.models.order import OrderStatuses
 
 
-class Delivery(Base):
-    __tablename__ = 'deliveries'
+class Order(Base):
+    __tablename__ = 'orders'
 
     id = Column(UUID(as_uuid=True), primary_key=True)
     address = Column(String, nullable=False)
     date = Column(DateTime, nullable=False)
-    status = Column(Enum(DeliveryStatuses), nullable=False)
-    deliveryman_id = Column(UUID(as_uuid=True), nullable=True)
+    status = Column(Enum(OrderStatuses), nullable=False)
+    storekeeper_id = Column(UUID(as_uuid=True), nullable=True)

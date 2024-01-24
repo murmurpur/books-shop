@@ -1,30 +1,30 @@
-# /app/models/delivery.py
+# /app/models/order.py
 
 import enum
 from uuid import UUID
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict
-from app.models.deliveryman import Deliveryman 
+from app.models.storekeeper import Storekeeper 
 
 
-class DeliveryStatuses(enum.Enum):
+class OrderStatuses(enum.Enum):
     CREATED = 'created'
     ACTIVATED = 'activated'
     DONE = 'done'
     CANCELED = 'canceled'
 
 
-class Delivery(BaseModel):
+class Order(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
     address: str
     date: datetime
-    status: DeliveryStatuses
-    deliveryman: Deliveryman | None = None
+    status: OrderStatuses
+    storekeeper: Storekeeper | None = None
 
 
-class CreateDeliveryRequest(BaseModel):
+class CreateOrderRequest(BaseModel):
     order_id: UUID
     address: str
     date: str

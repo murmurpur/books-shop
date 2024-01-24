@@ -1,68 +1,68 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Body
 
-from app.services.delivery_service import DeliveryService
-from app.models.delivery import Delivery, CreateDeliveryRequest
+from app.services.order_service import OrderService
+from app.models.order import Order, CreateOrderRequest
 
 
-delivery_router = APIRouter(prefix='/delivery', tags=['Delivery'])
+order_router = APIRouter(prefix='/order', tags=['Order'])
 
 
-@delivery_router.get('/')
-def get_deliveries(delivery_service: DeliveryService = Depends(DeliveryService)) -> list[Delivery]:
-    return delivery_service.get_deliveries()
+@order_router.get('/')
+def get_orders(order_service: OrderService = Depends(OrderService)) -> list[Order]:
+    return order_service.get_orders()
 
-@delivery_router.post('/')
-def add_delivery(
-    delivery_info: CreateDeliveryRequest,
-    delivery_service: DeliveryService = Depends(DeliveryService)
-) -> Delivery:
+@order_router.post('/')
+def add_order(
+    order_info: CreateOrderRequest,
+    order_service: OrderService = Depends(OrderService)
+) -> Order:
     try:
-        delivery = delivery_service.create_delivery(delivery_info.order_id, delivery_info.date, delivery_info.address)
-        return delivery.dict()
+        order = order_service.create_order(order_info.order_id, order_info.date, order_info.address)
+        return order.dict()
     except KeyError:
-        raise HTTPException(400, f'Delivery with id={delivery_info.order_id} already exists')
+        raise HTTPException(400, f'Order with id={order_info.order_id} already exists')
 
-@delivery_router.post('/{id}/activate')
-def activate_delivery(id: UUID, delivery_service: DeliveryService = Depends(DeliveryService)) -> Delivery:
+@order_router.post('/{id}/activate')
+def activate_order(id: UUID, order_service: OrderService = Depends(OrderService)) -> Order:
     try:
-        delivery = delivery_service.activate_delivery(id)
-        return delivery.dict()
+        order = order_service.activate_order(id)
+        return order.dict()
     except KeyError:
-        raise HTTPException(404, f'Delivery with id={id} not found')
+        raise HTTPException(404, f'Order with id={id} not found')
     except ValueError:
-        raise HTTPException(400, f'Delivery with id={id} can\'t be activated')
+        raise HTTPException(400, f'Order with id={id} can\'t be activated')
 
-@delivery_router.post('/{id}/finish')
-def finish_delivery(id: UUID, delivery_service: DeliveryService = Depends(DeliveryService)) -> Delivery:
+@order_router.post('/{id}/finish')
+def finish_order(id: UUID, order_service: OrderService = Depends(OrderService)) -> Order:
     try:
-        delivery = delivery_service.finish_delivery(id)
-        return delivery.dict()
+        order = order_service.finish_order(id)
+        return order.dict()
     except KeyError:
-        raise HTTPException(404, f'Delivery with id={id} not found')
+        raise HTTPException(404, f'Order with id={id} not found')
     except ValueError:
-        raise HTTPException(400, f'Delivery with id={id} can\'t be finished')
+        raise HTTPException(400, f'Order with id={id} can\'t be finished')
 
-@delivery_router.post('/{id}/cancel')
-def cancel_delivery(id: UUID, delivery_service: DeliveryService = Depends(DeliveryService)) -> Delivery:
+@order_router.post('/{id}/cancel')
+def cancel_order(id: UUID, order_service: OrderService = Depends(OrderService)) -> Order:
     try:
-        delivery = delivery_service.cancel_delivery(id)
-        return delivery.dict()
+        order = order_service.cancel_order(id)
+        return order.dict()
     except KeyError:
-        raise HTTPException(404, f'Delivery with id={id} not found')
+        raise HTTPException(404, f'Order with id={id} not found')
     except ValueError:
-        raise HTTPException(400, f'Delivery with id={id} can\'t be canceled')
+        raise HTTPException(400, f'Order with id={id} can\'t be canceled')
 
-@delivery_router.post('/{id}/appoint')
-def set_deliveryman(
+@order_router.post('/{id}/appoint')
+def set_storekeeper(
     id: UUID,
-    deliveryman_id: UUID = Body(embed=True),
-    delivery_service: DeliveryService = Depends(DeliveryService)
-) -> Delivery:
+    storekeeper_id: UUID = Body(embed=True),
+    order_service: OrderService = Depends(OrderService)
+) -> Order:
     try:
-        delivery = delivery_service.set_deliveryman(id, deliveryman_id)
-        return delivery.dict()
+        order = order_service.set_storekeeper(id, storekeeper_id)
+        return order.dict()
     except KeyError:
-        raise HTTPException(404, f'Delivery with id={id} not found')
+        raise HTTPException(404, f'Order with id={id} not found')
     except ValueError:
         raise HTTPException(400)

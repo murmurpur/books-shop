@@ -1,64 +1,64 @@
-# /app/services/delivery_service.py
+# /app/services/order_service.py
 
 from uuid import UUID
 from fastapi import Depends
 from datetime import datetime
 
-from app.models.delivery import Delivery, DeliveryStatuses
-from app.repositories.db_delivery_repo import DeliveryRepo
-from app.repositories.local_deliveryman_repo import DeliverymenRepo
+from app.models.order import Order, OrderStatuses
+from app.repositories.db_order_repo import OrderRepo
+from app.repositories.local_storekeeper_repo import Storekeeper1Repo
 
 
-class DeliveryService():
-    delivery_repo: DeliveryRepo
-    deliveryman_repo: DeliverymenRepo
+class OrderService():
+    order_repo: OrderRepo
+    storekeeper_repo: Storekeeper1Repo
 
-    def __init__(self, delivery_repo: DeliveryRepo = Depends(DeliveryRepo)) -> None:
-        self.delivery_repo = delivery_repo
-        self.deliveryman_repo = DeliverymenRepo()
+    def __init__(self, order_repo: OrderRepo = Depends(OrderRepo)) -> None:
+        self.order_repo = order_repo
+        self.storekeeper_repo = Storekeeper1Repo()
 
-    def get_deliveries(self) -> list[Delivery]:
-        return self.delivery_repo.get_deliveries()
+    def get_orders(self) -> list[Order]:
+        return self.order_repo.get_orders()
 
-    def create_delivery(self, order_id: UUID, date: datetime, address: str) -> Delivery:
-        delivery = Delivery(id=order_id, address=address, date=date, status=DeliveryStatuses.CREATED)
-        return self.delivery_repo.create_delivery(delivery)
+    def create_order(self, order_id: UUID, date: datetime, address: str) -> Order:
+        order = Order(id=order_id, address=address, date=date, status=OrderStatuses.CREATED)
+        return self.order_repo.create_order(order)
 
-    def activate_delivery(self, id: UUID) -> Delivery:
-        delivery = self.delivery_repo.get_delivery_by_id(id)
-        if delivery.status != DeliveryStatuses.CREATED:
+    def activate_order(self, id: UUID) -> Order:
+        order = self.order_repo.get_order_by_id(id)
+        if order.status != OrderStatuses.CREATED:
             raise ValueError
 
-        delivery.status = DeliveryStatuses.ACTIVATED
-        return self.delivery_repo.set_status(delivery)
+        order.status = OrderStatuses.ACTIVATED
+        return self.order_repo.set_status(order)
 
-    def set_deliveryman(self, delivery_id, deliveryman_id) -> Delivery:
-        delivery = self.delivery_repo.get_delivery_by_id(delivery_id)
+    def set_storekeeper(self, order_id, storekeeper_id) -> Order:
+        order = self.order_repo.get_order_by_id(order_id)
 
         try:
-            deliveryman = self.deliveryman_repo.get_deliveryman_by_id(deliveryman_id)
+            storekeeper = self.storekeeper_repo.get_storekeeper_by_id(storekeeper_id)
         except KeyError:
             raise ValueError
 
-        if delivery.status != DeliveryStatuses.ACTIVATED:
+        if order.status != OrderStatuses.ACTIVATED:
             raise ValueError
 
-        delivery.deliveryman = deliveryman
-        return self.delivery_repo.set_deliveryman(delivery)
+        order.storekeeper = storekeeper
+        return self.order_repo.set_storekeeper(order)
 
-    def finish_delivery(self, id: UUID) -> Delivery:
-        delivery = self.delivery_repo.get_delivery_by_id(id)
-        if delivery.status != DeliveryStatuses.ACTIVATED:
+    def finish_order(self, id: UUID) -> Order:
+        order = self.order_repo.get_order_by_id(id)
+        if order.status != OrderStatuses.ACTIVATED:
             raise ValueError
 
-        delivery.status = DeliveryStatuses.DONE
-        return self.delivery_repo.set_status(delivery)
+        order.status = OrderStatuses.DONE
+        return self.order_repo.set_status(order)
 
-    def cancel_delivery(self, id: UUID) -> Delivery:
-        delivery = self.delivery_repo.get_delivery_by_id(id)
-        if delivery.status == DeliveryStatuses.DONE:
+    def cancel_order(self, id: UUID) -> Order:
+        order = self.order_repo.get_order_by_id(id)
+        if order.status == OrderStatuses.DONE:
             raise ValueError
 
-        delivery.status = DeliveryStatuses.CANCELED
-        return self.delivery_repo.set_status(delivery)
+        order.status = OrderStatuses.CANCELED
+        return self.order_repo.set_status(order)
         
