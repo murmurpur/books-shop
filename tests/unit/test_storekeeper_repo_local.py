@@ -6,7 +6,7 @@ from app.repositories.local_storekeeper_repo import Storekeeper1Repo
 
 
 @pytest.fixture()
-def delivryman_list() -> list[Storekeeper]:
+def storekeper_list() -> list[Storekeeper]:
     return [
         Storekeeper(id=UUID('85db966c-67f1-411e-95c0-f02edfa5464a'),
                     name='Лаптев Иван Алексаендрович'),
@@ -22,13 +22,13 @@ def storekeeper_repo() -> Storekeeper1Repo:
     return Storekeeper1Repo()
 
 
-def test_delivryman_list(delivryman_list: list[Storekeeper], storekeeper_repo: Storekeeper1Repo):
-    assert storekeeper_repo.get_storekeeper1() == delivryman_list
+def test_storekeper_list(storekeper_list: list[Storekeeper], storekeeper_repo: Storekeeper1Repo):
+    assert storekeeper_repo.get_storekeeper1() == storekeper_list
 
 
-def test_get_storekeeper_by_id(delivryman_list: list[Storekeeper], storekeeper_repo: Storekeeper1Repo):
+def test_get_storekeeper_by_id(storekeper_list: list[Storekeeper], storekeeper_repo: Storekeeper1Repo):
     assert storekeeper_repo.get_storekeeper_by_id(
-        delivryman_list[0].id) == delivryman_list[0]
+        storekeper_list[0].id) == storekeper_list[0]
 
 
 def test_get_storekeeper_by_id_error(storekeeper_repo: Storekeeper1Repo):
