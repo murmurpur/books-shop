@@ -21,11 +21,9 @@ jobs:
           sudo apt update
           sudo apt install -y python3-pip
           pip install -r requirements.txt
-
       - name: Run unit tests
         run: |
           pytest ./tests/unit
-
       - name: Prepare integration tests
         run: |
           sudo docker run --name pg-tests -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:14
@@ -42,7 +40,6 @@ jobs:
       - name: Run integration tests
         run: |
           pytest ./tests/integration
-
       - name: Prepare e2e tests
         run: |
           sudo docker stop pg-tests
@@ -52,11 +49,9 @@ jobs:
           alembic upgrade head
           sudo docker run -p 8000:80 -e AMQP_URL=amqp://guest:guest123@51.250.26.59:5672/ -e POSTGRES_URL=postgresql://postgres:password@172.17.0.1:5432/postgres -e PORT=80 -d back-tests
           sleep 5
-
       - name: Run e2e tests
         run: |
           pytest ./tests/e2e
-
   build-and-push-to-dh:
     name: Build and push to DockerHub
     runs-on: ubuntu-latest
@@ -64,17 +59,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-        
       - name: Build docker image
         run: |
-          docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/order-service:2.0
+          docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/order-service:1.0
           
       - name: Test solution
         run: |
           echo There will be tests later
-
       - name: Login to DockerHub
         uses: docker/login-action@v3.0.0
         with:
@@ -83,8 +74,7 @@ jobs:
 
       - name: Push tag to DockerHub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/order-service:2.0
-
+          docker push ${{ secrets.DOCKER_USERNAME }}/order-service:1.0
   build-and-push-to-yc:
     name: Build and push to YandexCloud Registry
     runs-on: ubuntu-latest
@@ -94,8 +84,7 @@ jobs:
 
       - name: Build docker image
         run: |
-          docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/order-service:1.0      
-
+          docker build . --file Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:1.0
       - name: Login to YC Registry
         uses: docker/login-action@v3.0.0
         with:
@@ -105,8 +94,7 @@ jobs:
 
       - name: Push tag YC Registry
         run: |
-          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:2.0
-
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:1.0
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -118,7 +106,7 @@ jobs:
         yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
         container-name: ${{ secrets.YC_CONTAINER_NAME }}
         folder-id: ${{ secrets.YC_FOLDER_ID }}
-        revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:2.0
+        revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:1.0
         revision-service-account-id: ${{ secrets.YC_SA_ID }}
         revision-env: |
           AMQP_URL=${{ secrets.ENV_AMQP_URL }}
