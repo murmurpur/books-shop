@@ -66,7 +66,7 @@ jobs:
 
       - name: Build docker image
         run: |
-          docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/order-service:1.0
+          docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/order-service:2.0
           
       - name: Test solution
         run: |
@@ -80,7 +80,7 @@ jobs:
 
       - name: Push tag to DockerHub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/order-service:1.0
+          docker push ${{ secrets.DOCKER_USERNAME }}/order-service:2.0
 
   build-and-push-to-yc:
     name: Build and push to YandexCloud Registry
@@ -100,7 +100,8 @@ jobs:
 
       - name: Push tag YC Registry
         run: |
-          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:1.0
+          docker build -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:2.0
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:2.0
 
   deploy:
     name: Deploy
@@ -113,7 +114,7 @@ jobs:
         yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
         container-name: ${{ secrets.YC_CONTAINER_NAME }}
         folder-id: ${{ secrets.YC_FOLDER_ID }}
-        revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:1.0
+        revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:2.0
         revision-service-account-id: ${{ secrets.YC_SA_ID }}
         revision-env: |
           AMQP_URL=${{ secrets.ENV_AMQP_URL }}
