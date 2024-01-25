@@ -82,12 +82,6 @@ jobs:
     needs: [test]
     steps:
       - uses: actions/checkout@v3
-
-      - name: Build docker image
-        run: |
-          echo docker build . --file Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:1.0
-          docker build . --file Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:1.0
-
           
       - name: Login to YC Registry
         uses: docker/login-action@v3.0.0
@@ -96,9 +90,17 @@ jobs:
           username: json_key
           password: ${{ secrets.YC_KEYS }}
 
-      - name: Push tag YC Registry
+
+      - name: Debud build
+        run:
+          echo docker build -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:2.0 .
+          echo docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:2.0
+          
+      - name: Build and push tag YC Registry
         run: |
-          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:1.0
+          docker build -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:2.0 .
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/order-service:2.0
+    
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
